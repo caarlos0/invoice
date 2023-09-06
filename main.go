@@ -113,11 +113,10 @@ func init() {
 	generateCmd.Flags().Float64VarP(&file.Discount, "discount", "d", defaultInvoice.Discount, "Discount")
 	generateCmd.Flags().StringVarP(&file.Currency, "currency", "c", defaultInvoice.Currency, "Currency")
 
-
-	generateCmd.Flags().StringVar(&file.Fonts.Regular.Name, "fonts.regular.name",  "", "Regular font name")
-	generateCmd.Flags().StringVar(&file.Fonts.Regular.Path, "fonts.regular.path",  "", "Regular font path")
-	generateCmd.Flags().StringVar(&file.Fonts.Bold.Name, "fonts.bold.name",  "", "Bold font name")
-	generateCmd.Flags().StringVar(&file.Fonts.Bold.Path, "fonts.bold.path",  "", "Bold font path")
+	generateCmd.Flags().StringVar(&file.Fonts.Regular.Name, "fonts.regular.name", "", "Regular font name")
+	generateCmd.Flags().StringVar(&file.Fonts.Regular.Path, "fonts.regular.path", "", "Regular font path")
+	generateCmd.Flags().StringVar(&file.Fonts.Bold.Name, "fonts.bold.name", "", "Bold font name")
+	generateCmd.Flags().StringVar(&file.Fonts.Bold.Path, "fonts.bold.path", "", "Bold font path")
 
 	generateCmd.Flags().StringVarP(&file.Note, "note", "n", "", "Note")
 	generateCmd.Flags().StringVarP(&output, "output", "o", "invoice.pdf", "Output file (.pdf)")
@@ -160,7 +159,7 @@ var generateCmd = &cobra.Command{
 			return err
 		}
 
-		writeLogo(&pdf, file.Fonts, file.Logo, file.From, file.Details)
+		writeHeader(&pdf, file.Fonts, file.Logo, file.From, file.Details)
 		writeTitle(&pdf, file.Fonts, file.Title, file.Id, file.Date)
 		writeBillTo(&pdf, file.Fonts, file.To)
 		writeHeaderRow(&pdf, file.Fonts)

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/signintech/gopdf"
 )
@@ -23,24 +24,33 @@ const (
 	totalLabel    = "Total"
 )
 
-func writeLogo(pdf *gopdf.GoPdf, fonts Fonts, logo, from, details string) {
+func writeHeader(pdf *gopdf.GoPdf, fonts Fonts, logo, from, details string) {
+	scaledHeight := 0.0
 	if logo != "" {
 		width, height := getImageDimension(logo)
-		scaledWidth := 100.0
-		scaledHeight := float64(height) * scaledWidth / float64(width)
-		_ = pdf.Image(logo, pdf.GetX(), pdf.GetY(), &gopdf.Rect{W: scaledWidth, H: scaledHeight})
-		pdf.Br(scaledHeight + 24)
+		scaledWidth := 30.0
+		scaledHeight = float64(height) * scaledWidth / float64(width)
+		_ = pdf.Image(logo, pdf.GetX(), pdf.GetY(), &gopdf.Rect{
+			W: scaledWidth,
+			H: scaledHeight,
+		})
+		pdf.SetX(pdf.GetX() + 40.0)
+		pdf.SetY(pdf.GetY() + 6.0)
 	}
+
 	_ = pdf.SetFont(fonts.Bold.Name, "", 15)
 	pdf.SetTextColor(55, 55, 55)
 	_ = pdf.Cell(nil, from)
+	if logo != "" {
+		pdf.Br(scaledHeight)
+	}
 
 	if details != "" {
-		pdf.Br(25)
 		_ = pdf.SetFont(fonts.Regular.Name, "", 10)
 		pdf.SetTextColor(95, 95, 95)
 		lines := strings.Split(details, "\n")
 		for i, line := range lines {
+			// pdf.SetX(pdf.GetX()+40.0)
 			_ = pdf.Cell(nil, line)
 			if i == len(lines)-1 {
 				continue
@@ -48,7 +58,7 @@ func writeLogo(pdf *gopdf.GoPdf, fonts Fonts, logo, from, details string) {
 			pdf.Br(11)
 		}
 	}
-	pdf.Br(36)
+	pdf.Br(24)
 	pdf.SetStrokeColor(225, 225, 225)
 	pdf.Line(pdf.GetX(), pdf.GetY(), 100, pdf.GetY())
 	pdf.Br(36)
@@ -78,7 +88,11 @@ func writeDueDate(pdf *gopdf.GoPdf, fonts Fonts, due string) {
 	pdf.SetTextColor(0, 0, 0)
 	_ = pdf.SetFontSize(11)
 	pdf.SetX(amountColumnOffset - 15)
-	_ = pdf.Cell(nil, due)
+	if due == "EOM" {
+		_ = pdf.Cell(nil, time.Now().AddDate(0, 1, -time.Now().Day()).Format("Jan 02, 2006"))
+	} else {
+		_ = pdf.Cell(nil, due)
+	}
 	pdf.Br(12)
 }
 
