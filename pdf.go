@@ -45,6 +45,10 @@ func writeHeader(pdf *gopdf.GoPdf, fonts Fonts, logo, from, details string) {
 		pdf.Br(scaledHeight)
 	}
 
+	if logo == "" && details != "" {
+		pdf.Br(24)
+	}
+
 	if details != "" {
 		_ = pdf.SetFont(fonts.Regular.Name, "", 10)
 		pdf.SetTextColor(95, 95, 95)
